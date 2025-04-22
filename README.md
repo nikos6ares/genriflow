@@ -44,9 +44,10 @@ As I transition from physics to machine learning, it’s time to get my hands di
 
 On a personal note, as a passionate music enthusiast, I’ve curated a private music collection of over 3,500 songs, which I’ve manually (!) classified into three categories. Now feels like the perfect moment to build my own Spotify-like classification system, starting with a basic genre-based model. I still remember being fascinated at age 15 by my Sony Walkman MP3 player and its SensMe detection system, which categorized music by mood. Although that feature was eventually removed from later models, who knows—maybe one day I’ll have the time (and the tools) to recreate and expand on it myself. Yet, SensMe used similar feature-extraction that I am going to use for genre-based classification.
 
-<p align="center">
-<img src="./figures_genriflow/sensme.png" alt="Alt text" width="600" />
-</p>
+<figure align="center">
+  <img src="./figures_genriflow/sensme.png" alt="Alt text" width="600" />
+  <figcaption>SensMe in the Sony Walkman MP3 player [figs. from wikipedia]</figcaption>
+</figure>
 
 ## Datasets
 
