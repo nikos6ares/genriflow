@@ -101,6 +101,7 @@ In simple terms, tonnetz captures the chord progressions and the harmonics.
 </p>
 The mel-frequency cepstrum or mel spectrogram is a special type of spectrogram. The idea is to map the spectrogram (the frequencies) onto the mel scale (the mels). Human ears do not perceive pitches linearly. Distance between frequencies sound uneven. Mel scale is a proper stretch so that two tones with same mel distance sound equally spaced to our ears. 
 
+
 In simple terms, the mel spectrogram captures the texture, the intensity patterns and the rhythm of the songs.
 
 ### _Mel-Frequency Cepstral Coefficients (MFCCs)_
