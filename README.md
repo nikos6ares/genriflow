@@ -1,7 +1,7 @@
 # Genriflow
 
 ## Description
-`genriflow` is a ML-based program to classify songs into genres. 
+`genriflow` is a ML-based program to classify songs into a few genres. 
 
 It includes the following files:
 - `genrize.ipynb`: The CNN supervised model
