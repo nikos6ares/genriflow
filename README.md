@@ -72,7 +72,7 @@ The pitch is how high or low a note sounds. The intensity is how strong or loud 
 <img src="./figures_genriflow/audio_signal.png" alt="Alt text" width="600" />
 </p>
 
-The first question I asked myself was: could I use the digital audio signal directly from an MP3 file? Well, not really. An audio signal contains a huge amount of unprocessed information. Meanwhile, the concept of a musical genre is complicated and hard to define. It depends on many different features, as I’ll explain later. To make the inference algorithm focus on specific aspects of the raw data and their correlations, further feature extraction is necessary.
+The first question I asked myself was: could I use the digital audio signal directly from an MP3 file? Well, not really. An audio signal contains a huge amount of unprocessed information. Meanwhile, the concept of a musical genre is complicated and hard to define. It depends on many different features, as I’ll explain later. To make the inference algorithm focus on specific aspects of the raw data and their inter-correlations, further feature extraction is necessary.
 
 ### _Chroma_
 
@@ -136,7 +136,7 @@ NMI measures how much knowing the cluster reduces the uncertainty about the true
 
 For both metrics, a perfect match yields a value of 1, while random labels correspond to 0.
 
-In our case, we obtained ARI = 0.1283 and NMI = 0.2958, which is disappointing. The issue likely stems from the flattening step, which overlooks temporal correlations. This led me to explore using supervised learning instead.
+In our case, we obtained ARI = 0.1283 and NMI = 0.2958, which is disappointing. The issue likely stems from the flattening step, which overlooks temporal correlations.
 
 ### LSTM - Autoencoders (Unsupervised)
 
@@ -144,7 +144,7 @@ In our case, we obtained ARI = 0.1283 and NMI = 0.2958, which is disappointing. 
 <img src="./figures_genriflow/autoencoder.png" alt="Alt text" width="600" />
 </p>
 
-In order to take into consideration the temporal correlations, I used an LSTM - autoencoder. The idea is to use an autoencoder with LSTM layers and then take the latent representation and apply PCA+kmeans. The result: a disaster: ARI = -0.0081 (worse than random!), NMI=0.202. This led me to explore using supervised learning instead.
+In order to take into consideration the temporal correlations, I used an LSTM - autoencoder. The idea is to use an autoencoder with LSTM layers and then take the latent representation and apply PCA+kmeans. The result proved to be a disaster: ARI = -0.0081 (worse than random!), NMI=0.202. This led me to explore using supervised learning instead.
 
 ### LSTM
 
@@ -167,7 +167,7 @@ After training, my test accuracy reached 56.5%, which I consider pretty decent!
 <p align="center">
 <img src="./figures_genriflow/architecture.png" alt="Alt text" height="300" />
 </p>
-The architecture with which I achieved the highest accuracy is a CNN with one layer of a fully connected network. The neural network is shown in the figure. Without regularization, the test accuracy is 66%. With regularization, I achieved 74%. Then I tried data augmentation with both strong and weak augmented data. The weak augmentation consists of just Gaussian noise, while the strong augmentation includes additional time-stretch, shift, and pitch shift. I found that the strong augmented data actually hurt the test accuracy, whereas the weak augmented data did not improve the accuracy considerably (I got 74.5%).
+The architecture with which I achieved the highest accuracy is a CNN with one layer of a fully connected network. The neural network is shown in the figure. Without regularization, the test accuracy is 66%. **With regularization, I achieved 74%**. Then I tried data augmentation with both strong and weak augmented data. The weak augmentation consists of just Gaussian noise, while the strong augmentation includes additional time-stretch, shift, and pitch shift. I found that the strong augmented data actually hurt the test accuracy, whereas the weak augmented data did not improve the accuracy considerably (I got 74.5%).
 
 Plots of the training and validation error and loss for augmented and non-augmented case are shown below.
 
@@ -198,6 +198,8 @@ After preprocessing the data, I trained the following five models:
   - CNNs with regularization
   - CNNs with regularization and augmented data
 
+The highest accuracy was obtaiend with CNNs with regularization achieving a 74% accuracy.
+
 The unsupervised approach was the least promising, as it achieved low Adjusted Rand Index and Normalized Mutual Information scores—metrics used to test the accuracy of the clustering against the given labels.
 The supervised approach, however, achieved test accuracies above 50% (LSTM + CNN: 56.5% and CNNs: 74.5%). This was somewhat surprising to me, since LSTMs are typically used for long time series, which is what songs are, while CNNs are mainly used for image classification (working with grid-like structures such as pictures or videos). However, it seems that by treating a spectrogram or the Tonnetz diagram as a visual image and applying CNNs, I was able to achieve high test accuracies.
 
@@ -206,8 +208,7 @@ Theoretically, I felt a bit unsatisfied, as this approach seems too “engineeri
 Most importantly, this project helped me realize how crucial feature engineering is. I used physics and cultural knowledge (Western music theory) to extract features, which brought in domain expertise as well as cultural biases—apart from just data collection. Preprocessing, then, is not just a “bureaucratic” step in machine learning; it is as important as training the model itself.
 
 ## Extensions
-
-1. The goal of this project was to develop a genre classifier for my own music library. I used the GTZAN dataset, which classifies songs into 10 genres: blues, classical, country, disco, hip-hop, jazz, metal, pop, reggae, and rock. Admittedly, this is not the classification I want. In my own music library, I do not have many songs in disco, metal, blues, or reggae. Instead, I have many songs that blend different genres. Nowadays, music tends to be more genre-blending. The GTZAN dataset, in this sense, is a bit limited. Using data from Spotify would be much more useful for me. My goal is to use the Spotify dataset for genre labels beyond these 10.
+1. The goal of this project was to develop a genre classifier for my own music library. I used the GTZAN dataset, which classifies songs into 10 genres: blues, classical, country, disco, hip-hop, jazz, metal, pop, reggae, and rock. Admittedly, this is not the classification I want. In my own music library, I do not have many songs in disco, metal, blues, or reggae. Instead, I have many songs that blend different genres. Nowadays, music tends to be more genre-blending. The GTZAN dataset, in this sense, is a bit limited. Using data from Spotify would be much more useful for me. My goal is to use the [Spotify Web API](https://developer.spotify.com/documentation/web-api) for genre labels beyond these 10.
 
 2. Another extension I want to apply is to introduce two additional genre categories. One would be language-based (e.g., to identify Greek songs), and the other would be an "instrumental" category, for songs with no lyrics. For this, I would need a language-based model.
 
@@ -215,9 +216,9 @@ Most importantly, this project helped me realize how crucial feature engineering
 
 ## Final Perspectives
 
-There are many ways to classify or cluster songs. I somehow believed that using unsupervised learning with these four features would naturally group songs according to genre. However, there are countless other ways to classify music—for example, emotion-based (like SensMe), language vs. non-language (my planned future extension), country of origin, year of release, and so on. Unsupervised learning would require very selective feature engineering to make sure that genre-based clustering actually emerges. As I mentioned earlier, genre classification is partly cultural too, which makes it difficult even for humans to precisely define what separates, say, blues from jazz.
+There are many ways to classify or cluster songs. I somehow believed that using unsupervised learning with these four features would naturally group songs according to genre. However, there are countless other ways to classify music—for example, emotion-based (like SensMe), language vs. non-language (my planned future extension), country of origin, year of release, and so on. Unsupervised learning would require very selective feature engineering to make sure that genre-based clustering and no other clustering actually emerges. As I mentioned earlier, genre classification is partly cultural too, which makes it difficult even for humans to precisely define what separates, say, blues from jazz.
 
-Supervised learning felt a bit like cheating—it uses labels to track the learning process. But in doing so, we’re also sweeping a deeper problem under the rug: the user doesn’t actually know _why_ these songs correspond to specific labels. Then again, the model doesn’t need to know either. This reflects the classic issue in supervised learning: the lack of interpretability, the so-called "black-box" nature of the models.
+Supervised learning felt a bit like cheating—it uses labels to track the learning process. But in doing so, we’re also sweeping a deeper problem under the rug: the user doesn’t actually know _why_ these songs correspond to specific labels; it just sounds like e.g. pop. Then again, the model doesn’t need to know either. This reflects the classic issue in supervised learning: the lack of interpretability, the so-called "black-box" nature of the models.
 
 But do we really need to know what makes a song belong to a particular genre? I think this is where confusion arises. The initial goal was simply to classify songs—not to understand all the underlying aspects of music itself. In other words, sometimes we end up asking for too much. There’s an entire field of science called musicology dedicated to studying these deeper questions. Why do we suddenly demand more than we set out for? We built a music classifier; that’s all. There’s no shortcut to truly understanding what music is. We use machine learning as a statistical tool, not as a panacea.
 
